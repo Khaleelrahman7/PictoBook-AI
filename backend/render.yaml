@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: pictobook-ai-backend
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python main.py
+    envVars:
+      - key: NVIDIA_NIM_API_KEY
+        sync: false
+      - key: USE_NVIDIA_NIM
+        value: "true"
+      - key: USE_FACE_RESTORATION
+        value: "false"
+    healthCheckPath: /health
+

@@ -1,0 +1,34 @@
+# Core web framework
+fastapi>=0.104.1
+uvicorn[standard]>=0.24.0
+python-multipart>=0.0.6
+
+# Image processing
+pillow>=10.1.0
+opencv-python>=4.8.1.78
+numpy>=1.26.0  # Python 3.12 compatible
+
+# Deep learning
+torch>=2.1.0
+torchvision>=0.16.0
+
+# Face detection
+facenet-pytorch>=2.5.3
+
+# Diffusion models (optional - only needed for local SDXL)
+# Uncomment if you want to use local models (requires ~10GB download)
+# diffusers>=0.21.4
+# transformers>=4.35.2
+# accelerate>=0.24.1
+# safetensors>=0.4.1
+
+# API clients (required for stylization)
+replicate>=0.20.0
+requests>=2.31.0
+huggingface_hub>=0.20.0
+
+# Optional: Face restoration (install separately if needed)
+# These may require additional setup
+# gfpgan>=1.3.8
+# basicsr>=1.4.2
+# facexlib>=0.3.0

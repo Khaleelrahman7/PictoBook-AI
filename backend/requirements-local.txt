@@ -1,0 +1,9 @@
+# Optional: Local model dependencies
+# Only install these if you want to use local SDXL models (huge download ~10GB)
+# For most users, using Replicate API is recommended (no local models needed)
+
+diffusers>=0.21.4
+transformers>=4.35.2
+accelerate>=0.24.1
+safetensors>=0.4.1
+

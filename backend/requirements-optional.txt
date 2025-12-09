@@ -1,0 +1,9 @@
+# Optional dependencies for face restoration
+# Install these separately if you want face restoration features
+# Note: These may have compatibility issues with Python 3.12
+# Consider using Python 3.11 or installing from source if needed
+
+gfpgan>=1.3.8
+basicsr>=1.4.2
+facexlib>=0.3.0
+
