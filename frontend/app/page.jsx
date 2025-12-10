@@ -3,7 +3,14 @@
 import { useState } from 'react'
 import styles from './page.module.css'
 
+// Get API URL from environment variable (set in Netlify dashboard)
+// Must start with NEXT_PUBLIC_ to be available in browser
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+
+// Debug: Log API URL in development (removed in production build)
+if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+  console.log('API URL:', API_URL)
+}
 
 export default function Home() {
   const [file, setFile] = useState(null)
@@ -42,6 +49,11 @@ export default function Home() {
     try {
       const formData = new FormData()
       formData.append('photo', file)
+
+      // Log API URL in development for debugging
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Calling API at:', `${API_URL}/personalize`)
+      }
 
       const response = await fetch(`${API_URL}/personalize`, {
         method: 'POST',
