@@ -5,7 +5,13 @@ import styles from './page.module.css'
 
 // Get API URL from environment variable (set in Netlify dashboard)
 // Must start with NEXT_PUBLIC_ to be available in browser
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+// Remove trailing slash to avoid double slashes in URLs
+const getApiUrl = () => {
+  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+  return url.replace(/\/+$/, '') // Remove trailing slashes
+}
+
+const API_URL = getApiUrl()
 
 // Debug: Log API URL in development (removed in production build)
 if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
@@ -50,12 +56,13 @@ export default function Home() {
       const formData = new FormData()
       formData.append('photo', file)
 
-      // Log API URL in development for debugging
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Calling API at:', `${API_URL}/personalize`)
-      }
+      // Construct API endpoint URL (ensure no double slashes)
+      const endpoint = `${API_URL}/personalize`.replace(/([^:]\/)\/+/g, '$1')
+      
+      // Log API URL for debugging
+      console.log('Calling API at:', endpoint)
 
-      const response = await fetch(`${API_URL}/personalize`, {
+      const response = await fetch(endpoint, {
         method: 'POST',
         body: formData,
       })
