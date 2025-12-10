@@ -1,194 +1,188 @@
 # PictoBook AI - Photo Personalization System
 
-A complete working implementation that personalizes children's book illustrations by replacing template faces with stylized versions of uploaded photos.
+Transform your photos into personalized children's book illustrations using AI.
 
-## Architecture
+🌐 **Live Demo**: [https://pictobookai.netlify.app](https://pictobookai.netlify.app)
 
+## 📋 Table of Contents
+
+- [Overview](#overview)
+- [Architecture](#architecture)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Quick Start](#quick-start)
+- [Deployment](#deployment)
+- [Model Choice & Limitations](#model-choice--limitations)
+- [Future Improvements](#future-improvements)
+
+## 🎯 Overview
+
+PictoBook AI is a full-stack application that:
+1. Detects faces in uploaded photos
+2. Transforms them into illustrated/cartoon style using AI
+3. Composites the stylized face into a book template
+4. Returns a personalized children's book page
+
+## 🏗️ Architecture
+
+See [ARCHITECTURE_DIAGRAM.md](./ARCHITECTURE_DIAGRAM.md) for detailed architecture diagram.
+
+**High-Level Flow:**
 ```
-[ Next.js UI ]  <--->  [ FastAPI Backend ]  <--->  [ ML Pipeline ]
-     |                           |                               |
-     |                           |---> Face detection (MTCNN)
-     |                           |---> Face alignment & crop
-     |                           |---> Stylization (SDXL/img2img)
-     |                           |---> Composite into template
-     |                           |---> Optional: Face restoration
-     |                           |---> Return image
+User Upload → Frontend (Netlify) → Backend (Render) → Face Detection → 
+AI Stylization (NVIDIA NIM) → Template Compositing → Return Result
 ```
 
-## Tech Stack
+## ✨ Features
 
-- **Frontend**: Next.js 14 (App Router), React
-- **Backend**: FastAPI (Python)
+- ✅ Face detection and alignment (MTCNN)
+- ✅ AI-powered face stylization (Stable Diffusion 3)
+- ✅ Template compositing with smooth blending
+- ✅ Real-time processing feedback
+- ✅ Download personalized results
+- ✅ Responsive web interface
+
+## 🛠️ Tech Stack
+
+### Frontend
+- **Next.js 14** (App Router)
+- **React 18**
+- **Hosted on**: Netlify
+
+### Backend
+- **FastAPI** (Python)
 - **Face Detection**: MTCNN (facenet-pytorch)
-- **Stylization**: Stable Diffusion XL (img2img) via diffusers or Replicate API
+- **Stylization**: NVIDIA NIM API (Stable Diffusion 3 Medium)
 - **Image Processing**: Pillow, OpenCV
-- **Face Restoration**: GFPGAN (optional)
+- **Hosted on**: Render.com
 
-## Setup Instructions
+### External Services
+- **NVIDIA NIM API**: AI image generation
+- **Alternatives**: Hugging Face API, Replicate API (configurable)
+
+## 🚀 Quick Start
 
 ### Prerequisites
-
-- Python 3.9+ (Python 3.12+ recommended - uses updated package versions)
+- Python 3.12+
 - Node.js 18+
-- CUDA-capable GPU (recommended for local SDXL) or Replicate API key
+- NVIDIA NIM API key (or alternative)
 
-**Note**: If using Python 3.12+, the requirements.txt has been updated with compatible package versions. For Python 3.11 or earlier, you may need to adjust version constraints.
+### Local Development
 
-### Backend Setup
-
-1. Navigate to backend directory:
+**Backend:**
 ```bash
 cd backend
-```
-
-2. Create virtual environment:
-```bash
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. Install dependencies:
-```bash
+source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-```
-
-4. **Configure API (Recommended - No huge downloads)**:
-   - **NVIDIA NIM API (Default - Fast and reliable)**:
-     - Set environment variable with your API key:
-       ```bash
-       # Windows PowerShell
-       $env:NVIDIA_NIM_API_KEY="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"
-       
-       # Windows CMD
-       set NVIDIA_NIM_API_KEY=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
-       
-       # Linux/Mac
-       export NVIDIA_NIM_API_KEY="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"
-       ```
-   - **Alternative: Hugging Face API**:
-     - Get token from https://huggingface.co/settings/tokens
-     - Set: `USE_NVIDIA_NIM=false` and `HUGGINGFACE_API_TOKEN=your_token`
-   - **Alternative: Replicate API**:
-     - Get token from https://replicate.com/account/api-tokens
-     - Set: `USE_NVIDIA_NIM=false` and `REPLICATE_API_TOKEN=your_token`
-   - The system defaults to using NVIDIA NIM API (no local models needed)
-
-5. **Optional: Local Models (Only if you want offline processing)**:
-   - Requires GPU and ~10GB download
-   - Install local dependencies: `pip install -r requirements-local.txt`
-   - Set environment variable: `USE_LOCAL_SDXL=true`
-   - Not recommended for most users
-
-6. Run the backend:
-```bash
+export NVIDIA_NIM_API_KEY="your_key_here"
 python main.py
 ```
 
-Backend will run on `http://localhost:8000`
-
-### Frontend Setup
-
-1. Navigate to frontend directory:
+**Frontend:**
 ```bash
 cd frontend
-```
-
-2. Install dependencies:
-```bash
 npm install
-```
-
-3. Update backend URL in `frontend/app/page.jsx` if needed (default: `http://localhost:8000`)
-
-4. Run development server:
-```bash
+export NEXT_PUBLIC_API_URL="http://localhost:8000"
 npm run dev
 ```
 
-Frontend will run on `http://localhost:3000`
+Visit `http://localhost:3000`
 
-## Usage
+## 📦 Deployment
 
-1. Start backend server
-2. Start frontend server
-3. Open browser to `http://localhost:3000`
-4. Upload a photo with a clear face
-5. Click "Personalize" and wait for processing
-6. Download the result
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions.
 
-## Project Structure
+**Quick Deploy:**
+1. **Backend (Render)**: Connect GitHub repo, set env vars, deploy
+2. **Frontend (Netlify)**: Connect GitHub repo, set `NEXT_PUBLIC_API_URL`, deploy
+
+## 🎨 Model Choice & Limitations
+
+See [MODEL_CHOICE_AND_LIMITATIONS.md](./MODEL_CHOICE_AND_LIMITATIONS.md) for detailed explanation.
+
+### Model Choice: NVIDIA NIM API (SD3 Medium)
+
+**Why:**
+- Fast inference (~10-15 seconds)
+- No infrastructure burden (no local models)
+- High-quality results
+- Simple API integration
+
+**Limitations:**
+- Uses text-to-image (not true img2img) - identity preservation varies
+- Processing time: 15-30 seconds end-to-end
+- API dependency (requires internet)
+- Face detection may fail on edge cases (side profiles, poor lighting)
+
+## 🔮 Future Improvements (v2)
+
+See [MODEL_CHOICE_AND_LIMITATIONS.md](./MODEL_CHOICE_AND_LIMITATIONS.md#what-wed-improve-in-v2) for full roadmap.
+
+**Priority Features:**
+1. **True img2img** with ControlNet/Instant-ID for better identity preservation
+2. **Async processing** with job queue (Celery + Redis)
+3. **Multiple templates** with template selection UI
+4. **Result storage** in S3 with shareable links
+5. **Batch processing** for multiple photos
+6. **Style presets** (cartoon, watercolor, sketch, etc.)
+
+## 📁 Project Structure
 
 ```
 .
 ├── frontend/          # Next.js application
-│   ├── app/
-│   ├── public/
+│   ├── app/          # App Router pages
 │   └── package.json
 ├── backend/           # FastAPI application
-│   ├── main.py
+│   ├── main.py       # API endpoints
 │   ├── face_detection.py
 │   ├── stylization.py
 │   ├── compositing.py
-│   ├── requirements.txt
-│   └── templates/     # Book templates
-└── README.md
+│   └── requirements.txt
+├── ARCHITECTURE_DIAGRAM.md
+├── MODEL_CHOICE_AND_LIMITATIONS.md
+└── DEPLOYMENT.md
 ```
 
-## API Endpoints
+## 🔧 Configuration
 
-- `POST /personalize` - Upload photo and get personalized result
-  - Body: multipart/form-data with `photo` field
-  - Response: JSON with `image_base64` field
+### Environment Variables
 
-## Configuration
-
-Edit `backend/config.py` to adjust:
-- Face crop size
-- Stylization prompt
-- Template selection
-- Model settings
-
-## Deployment
-
-### Frontend (Vercel)
-```bash
-cd frontend
-vercel deploy
+**Backend (Render):**
+```
+NVIDIA_NIM_API_KEY=your_key
+USE_NVIDIA_NIM=true
+FRONTEND_URL=https://pictobookai.netlify.app
 ```
 
-### Backend (GPU Server)
-- Deploy to AWS EC2 (GPU instance), GCP, or Azure
-- Or use serverless with Replicate API
+**Frontend (Netlify):**
+```
+NEXT_PUBLIC_API_URL=https://your-backend.onrender.com
+```
 
-## Quick Start (API-Based - No Huge Downloads!)
+## 📚 Documentation
 
-1. **Get NVIDIA NIM API Key** (Recommended - Fast and reliable):
-   - Get your API key from NVIDIA (provided: `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`)
-   - Set environment variable: `NVIDIA_NIM_API_KEY=your_key`
-   
-2. **Alternative: Hugging Face API**:
-   - Get token from https://huggingface.co/settings/tokens (free tier available)
-   - Set: `USE_NVIDIA_NIM=false` and `HUGGINGFACE_API_TOKEN=your_token`
+- [Architecture Diagram](./ARCHITECTURE_DIAGRAM.md)
+- [Model Choice & Limitations](./MODEL_CHOICE_AND_LIMITATIONS.md)
+- [Deployment Guide](./DEPLOYMENT.md)
+- [Quick Deployment](./DEPLOYMENT_QUICK.md)
+- [Setup Guide](./SETUP.md)
 
-3. Install backend: `cd backend && pip install -r requirements.txt && python main.py`
+## 🤝 Contributing
 
-4. Install frontend: `cd frontend && npm install && npm run dev`
+Contributions welcome! Please open an issue or pull request.
 
-5. Open http://localhost:3000
+## 📄 License
 
-**Note**: The system now defaults to using NVIDIA NIM API - no local model downloads needed!
+MIT License
 
-See `SETUP.md` for detailed instructions.
+## 🙏 Acknowledgments
 
-## Notes
+- NVIDIA for NIM API
+- Stability AI for Stable Diffusion models
+- FastAPI and Next.js communities
 
-- First run downloads models (~7GB for SDXL locally) - only if using local SDXL
-- Processing time: ~10-30 seconds per image (depends on GPU/API)
-- Replicate API: ~$0.01-0.05 per image (check current pricing)
-- For production, consider adding:
-  - S3 storage for results
-  - Queue system for async processing
-  - Rate limiting
-  - Authentication
-  - Error handling and retries
+---
 
+**Built with ❤️ for personalized storytelling**
