@@ -61,27 +61,73 @@ export default function Home() {
       
       // Log API URL for debugging
       console.log('Calling API at:', endpoint)
+      console.log('File size:', file.size, 'bytes')
+
+      // Add timeout for long-running requests (60 seconds)
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 60000)
 
       const response = await fetch(endpoint, {
         method: 'POST',
         body: formData,
-      })
+        signal: controller.signal,
+      }).finally(() => clearTimeout(timeoutId))
+
+      console.log('Response status:', response.status)
+      console.log('Response headers:', Object.fromEntries(response.headers.entries()))
 
       if (!response.ok) {
-        const errorData = await response.json()
+        let errorData
+        try {
+          errorData = await response.json()
+        } catch (e) {
+          errorData = { detail: `Server error: ${response.status} ${response.statusText}` }
+        }
         throw new Error(errorData.detail || 'Failed to process image')
       }
 
-      const data = await response.json()
+      // Parse response
+      let data
+      try {
+        data = await response.json()
+        console.log('Response received, keys:', Object.keys(data))
+        console.log('Response status:', data.status)
+        if (data.image_base64) {
+          console.log('Image data length:', data.image_base64.length, 'characters')
+        } else {
+          console.warn('No image_base64 in response')
+        }
+      } catch (parseError) {
+        console.error('Failed to parse JSON response:', parseError)
+        // Clone response to read as text for debugging
+        const clonedResponse = response.clone()
+        const text = await clonedResponse.text()
+        console.error('Response text (first 500 chars):', text.substring(0, 500))
+        throw new Error('Invalid response format from server. Expected JSON but got: ' + text.substring(0, 100))
+      }
       
       if (data.status === 'success' && data.image_base64) {
-        setResult(`data:image/${data.format};base64,${data.image_base64}`)
+        console.log('Image received, length:', data.image_base64.length)
+        setResult(`data:image/${data.format || 'png'};base64,${data.image_base64}`)
       } else {
-        throw new Error('Invalid response from server')
+        console.error('Invalid response data:', data)
+        throw new Error('Invalid response from server: missing image data')
       }
     } catch (err) {
-      setError(err.message || 'An error occurred while processing your photo')
-      console.error('Error:', err)
+      let errorMessage = 'An error occurred while processing your photo'
+      
+      if (err.name === 'AbortError') {
+        errorMessage = 'Request timed out. The image processing is taking longer than expected. Please try again.'
+      } else if (err.message) {
+        errorMessage = err.message
+      }
+      
+      setError(errorMessage)
+      console.error('Error details:', {
+        name: err.name,
+        message: err.message,
+        stack: err.stack
+      })
     } finally {
       setLoading(false)
     }

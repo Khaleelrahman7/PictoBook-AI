@@ -22,12 +22,15 @@ app = FastAPI(title="PictoBook AI Personalization API")
 allowed_origins = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "https://pictobook-ai.netlify.app",  # Update with your Netlify domain
+    "https://pictobookai.netlify.app",  # Netlify domain
+    "https://pictobook-ai.netlify.app",  # Alternative domain
 ]
 
 # Add environment variable for custom frontend URL
 if os.getenv("FRONTEND_URL"):
-    allowed_origins.append(os.getenv("FRONTEND_URL"))
+    frontend_url = os.getenv("FRONTEND_URL")
+    if frontend_url not in allowed_origins:
+        allowed_origins.append(frontend_url)
 
 app.add_middleware(
     CORSMiddleware,
@@ -35,6 +38,8 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],  # Expose all headers to frontend
+    max_age=3600,  # Cache preflight requests for 1 hour
 )
 
 # Initialize components
